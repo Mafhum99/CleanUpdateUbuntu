@@ -1,6 +1,15 @@
 # CleanUpdateUbuntu
 
-A simple bash command shortcut to clean, update, and fix installer issues for Ubuntu Linux.
+A universal bash script to clean, update, and fix installer issues for Linux systems.
+
+## Supported Distributions
+
+| Package Manager | Distribution |
+|----------------|--------------|
+| `apt` | Debian, Ubuntu, Linux Mint |
+| `dnf` | Fedora, RHEL 8+ |
+| `yum` | RHEL 7+, CentOS |
+| `pacman` | Arch Linux, Manjaro |
 
 ## Usage
 
@@ -10,14 +19,27 @@ Run the script:
 bash clean.sh
 ```
 
+Or make it executable:
+
+```bash
+chmod +x clean.sh
+./clean.sh
+```
+
 ## Features
 
-- 🗑️ Clean apt cache
-- 🧹 Auto-clean packages
-- 📦 Remove unused packages
+- 🗑️ Clean package cache
+- 🧹 Auto-clean old packages
+- 📦 Remove unused dependencies
 - 📈 Update package list
 - 🛫 Check upgradable packages
-- 💉 Full system upgrade
+- 💉 Full system upgrade (with y/n confirmation)
+
+## Confirmation Options
+
+When prompted for full upgrade:
+- **`y`** → ✅ Continue upgrade → `SYSTEM UPDATE COMPLETE! 🕌🔥`
+- **`n`** → ⛔ Cancel upgrade → `Upgrade dibatalkan. System tetap berjalan normal. 🕌`
 
 ## Credits
 
