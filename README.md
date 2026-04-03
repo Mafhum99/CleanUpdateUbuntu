@@ -10,6 +10,7 @@ A universal bash script to clean, update, and fix installer issues for Linux sys
 | `dnf` | Fedora, RHEL 8+ |
 | `yum` | RHEL 7+, CentOS |
 | `pacman` | Arch Linux, Manjaro |
+| `pkg` | Termux (Android) |
 
 ## Usage
 

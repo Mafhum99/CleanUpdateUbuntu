@@ -165,6 +165,16 @@ elif command -v pacman &> /dev/null; then
     UPGRADE_CMD="pacman -Su --noconfirm"
     TEST_CMD="pacman -Sc --noconfirm"
     echo -e "\e[1;32m[*] \e[1;37m 📦 Detected: Arch Linux (pacman)\e[0m"
+elif command -v pkg &> /dev/null; then
+    PKG_MANAGER="pkg"
+    CLEAN_CMD="pkg clean"
+    AUTOCLEAN_CMD="pkg clean"
+    AUTOREMOVE_CMD="pkg autoremove -y"
+    UPDATE_CMD="pkg update"
+    LIST_UPGRADE_CMD="pkg list-upgradable"
+    UPGRADE_CMD="pkg upgrade -y"
+    TEST_CMD="pkg clean"
+    echo -e "\e[1;32m[*] \e[1;37m 📦 Detected: Termux (pkg)\e[0m"
 else
     echo -e "\e[1;31m❌ Error: No supported package manager found!\e[0m"
     echo -e "\e[1;31m🚫 Unsupported system. Exiting...\e[0m"
