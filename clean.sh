@@ -125,7 +125,23 @@ delete_credential() {
 clear && echo -e "\e[1;36m╔══════════════════════════════════════╗\e[0m" && echo -e "\e[1;36m║  \e[1;33m 🕌 \"Al-Jabr: seni melengkapi\"\e[1;36m      ║\e[0m" && echo -e "\e[1;36m║      \e[1;33m- Al-Khwarizmi 📖\e[1;36m               ║\e[0m" && echo -e "\e[1;36m╚══════════════════════════════════════╝\e[0m" && echo -e "\e[1;36m╔══════════════════════════════════════╗\e[0m" && echo -e "\e[1;36m║          \e[1;33m 💻 SYSTEM UPDATE 🔥\e[1;36m        ║\e[0m" && echo -e "\e[1;36m╚══════════════════════════════════════╝\e[0m"
 
 # Detect package manager FIRST (sebelum password handling)
-if command -v apt &> /dev/null; then
+# Termux detection MUST come before apt check (Termux has apt as alias)
+IS_TERMUX=false
+if [[ -n "$TERMUX_VERSION" ]] || [[ "$PREFIX" == *"/data/data/com.termux"* ]]; then
+    IS_TERMUX=true
+fi
+
+if [[ "$IS_TERMUX" == true ]]; then
+    PKG_MANAGER="pkg"
+    CLEAN_CMD="pkg clean"
+    AUTOCLEAN_CMD="pkg clean"
+    AUTOREMOVE_CMD="pkg autoremove -y"
+    UPDATE_CMD="pkg update"
+    LIST_UPGRADE_CMD="pkg list-upgradable"
+    UPGRADE_CMD="pkg upgrade -y"
+    TEST_CMD="pkg clean"
+    echo -e "\e[1;32m[*] \e[1;37m 📱 Detected: Termux on Android (pkg)\e[0m"
+elif command -v apt &> /dev/null; then
     PKG_MANAGER="apt"
     CLEAN_CMD="apt clean"
     AUTOCLEAN_CMD="apt autoclean"
@@ -165,16 +181,6 @@ elif command -v pacman &> /dev/null; then
     UPGRADE_CMD="pacman -Su --noconfirm"
     TEST_CMD="pacman -Sc --noconfirm"
     echo -e "\e[1;32m[*] \e[1;37m 📦 Detected: Arch Linux (pacman)\e[0m"
-elif command -v pkg &> /dev/null; then
-    PKG_MANAGER="pkg"
-    CLEAN_CMD="pkg clean"
-    AUTOCLEAN_CMD="pkg clean"
-    AUTOREMOVE_CMD="pkg autoremove -y"
-    UPDATE_CMD="pkg update"
-    LIST_UPGRADE_CMD="pkg list-upgradable"
-    UPGRADE_CMD="pkg upgrade -y"
-    TEST_CMD="pkg clean"
-    echo -e "\e[1;32m[*] \e[1;37m 📦 Detected: Termux (pkg)\e[0m"
 else
     echo -e "\e[1;31m❌ Error: No supported package manager found!\e[0m"
     echo -e "\e[1;31m🚫 Unsupported system. Exiting...\e[0m"
@@ -182,12 +188,17 @@ else
 fi
 
 # ============================================
-# PASSWORD HANDLING FLOW
+# PASSWORD HANDLING FLOW (skip for Termux)
 # ============================================
 
 SUDO_PASSWORD=""
 PASSWORD_MODE="none"  # none, manual, stored
 
+if [[ "$IS_TERMUX" == true ]]; then
+    # Termux tidak punya sudo - langsung set none
+    PASSWORD_MODE="none"
+    echo -e "\e[1;32m[*] \e[1;37m 📱 Mode Termux: tidak ada sudo, langsung lanjut.\e[0m"
+else
 # Test apakah sudo butuh password dengan command yang sesuai
 sudo_needs_password() {
     sudo -n $TEST_CMD 2>/dev/null
@@ -289,11 +300,14 @@ else
         esac
     fi
 fi
+fi  # end of Termux skip
 
-# Fungsi untuk menjalankan command dengan sudo password
+# Fungsi untuk menjalankan command (Termux tanpa sudo)
 run_sudo_cmd() {
     local cmd="$1"
-    if [[ "$PASSWORD_MODE" == "stored" ]] || [[ "$PASSWORD_MODE" == "manual" ]]; then
+    if [[ "$IS_TERMUX" == true ]]; then
+        bash -c "$cmd"
+    elif [[ "$PASSWORD_MODE" == "stored" ]] || [[ "$PASSWORD_MODE" == "manual" ]]; then
         echo "$SUDO_PASSWORD" | sudo -S bash -c "$cmd"
     else
         sudo bash -c "$cmd"
