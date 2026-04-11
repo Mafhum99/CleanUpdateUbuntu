@@ -2,6 +2,9 @@
 
 A universal bash script to clean, update, and fix installer issues for Linux systems.
 
+![Screenshot_2026-04-11-11-16-36-24_84d3000e3f4017145260f7618db1d683 (1)](https://github.com/user-attachments/assets/77fb2e91-243e-4bc4-8b76-eef3367e936d)
+
+
 ## Supported Distributions
 
 | Package Manager | Distribution |
